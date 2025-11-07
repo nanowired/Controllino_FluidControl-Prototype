@@ -1,16 +1,14 @@
 /*!
  * \cond FILEINFO
  ******************************************************************************
- * \file app_hsh.cpp
+ * \file app_ptt.h
  ******************************************************************************
- * Copyright (C) NWI GmbH, 2023
+ * Copyright (C) NWI GmbH, 2025
  ******************************************************************************
  *
- * \brief  servo motors implementation
+ * \brief  Shunt Contoller Application API
  *
  * \par Purpose
- *
- *
  *
  *
  ******************************************************************************
@@ -18,19 +16,16 @@
  * \endcond
  */
 
-/* --- Includes, Defines, Local Types  -------------------------------------- */
+#ifndef NWI_APP_ptt_H_
+#define NWI_APP_ptt_H_
 
-#include <Arduino.h>
-#include "motor_servo.h"
+#include <ArduinoJson.h>
 
+void app_ptt_init();
+void app_ptt_task100ms(JsonDocument &doc);
+void app_ptt_task1s();
+void app_ptt_setValues(JsonDocument &doc);
+void app_ptt_enterSaveState();
+void app_ptt_loop_tests();
 
-/* --- Local Variables ------------------------------------------------------ */
-
-void servo_init()
-{
-  // TODO:
-}
-void servo_process(JsonDocument &doc)
-{
-  // TODO:
-}
+#endif // NWI_APP_ptt_H_

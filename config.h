@@ -26,13 +26,10 @@
 
 // hardware info
 #define HW_INFO "Controllino Maxi Controller"
-#define SW_VERSION "1.2"
+#define SW_VERSION "1.3"
 
 // module type
-#define CFG_MODULE_GAL      (0)          // Galvanic Controller, with Extension Box
-#define CFG_MODULE_COC      (1)          // Containment Controller, with Extension Box
-#define CFG_MODULE_SNS      (2)          // Sensor Controller, no Extension Box
-#define CFG_MODULE_HSH      (3)          // SHUNT Controller, no Extension Box
+#define CFG_MODULE_PTT      (3)          // PTT Controller, no Extension Box
 
 #define SPI1_SS             (53)         // SPI1
 
@@ -60,9 +57,6 @@
 //      I2C                 addresses
 #define INA260_VCP_IN_ADDR  (0x40)
 #define INA260_VCP_OUT_ADDR (0x41)
-
-#define STP_WIRE_ADDR       (8)
-#define MOTORS_NUMBER       (4)
 
 #define SERIAL_BUFFER_SIZE  (128)
 //      #define             BUZZER       (CONTROLLINO_AI0)
@@ -94,41 +88,6 @@ typedef struct
   uint8_t mode; //  CFG_DIGITAL or CFG_ANALOG
   char *name;
 } CFG_inputPorts_T;
-
-typedef struct
-{
-  char *devName;
-  long valPos;
-  long valStep;
-  int valDir;
-  long valMaxSpeed;
-  long valSpeed;
-  long valAccl;
-  byte valAsync;
-  byte valSetpnt;
-} CFG_stepperMotorVal_T;
-typedef struct
-{
-  char *devName;
-  char *Pos;
-  char *Step;
-  char *Dir;
-  char *Speed;
-  char *Accl;
-  char *Async;
-  char *Setpnt;
-} CFG_stepperMotorParamName_T;
-const CFG_stepperMotorParamName_T app_stepperMotorParamNameCfg = {"devName", "pos", "step", "dir", "speed", "accl", "async", "setpnt"};
-
-typedef struct
-{
-  int backwPinMaped;
-  int forwPinMaped;
-  byte backwSensorData;
-  byte forwSensorData;
-  byte isenBackw;
-  byte isenForw;
-} CFG_stepperMotorSensor_T;
 
 // digital and analog input port definition
 #endif /* NWI_CONFIG_H_ */

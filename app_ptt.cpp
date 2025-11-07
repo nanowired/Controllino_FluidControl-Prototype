@@ -1,16 +1,14 @@
 /*!
  * \cond FILEINFO
  ******************************************************************************
- * \file app_hsh.cpp
+ * \file app_ptt.cpp
  ******************************************************************************
- * Copyright (C) NWI GmbH, 2023
+ * Copyright (C) NWI GmbH, 2025
  ******************************************************************************
  *
- * \brief  Shunt Contoller Application  implementation
+ * \brief  PTT Contoller Application  implementation
  *
  * \par Purpose
- *
- *
  *
  *
  ******************************************************************************
@@ -21,16 +19,13 @@
 /* --- Includes, Defines, Local Types  -------------------------------------- */
 
 #include <Arduino.h>
-
-// #include "Emb_Max31865.h"
-#//include "Max31865.h"
 #include "sensor.h"
 #include "port.h"
-#include "app_hsh.h"
+#include "app_ptt.h"
 
 /* --- Local Variables ------------------------------------------------------ */
 // HSH digital output port configuration
-static const CFG_DoutPorts_T app_hsh_DoutPortCfg[] =
+static const CFG_DoutPorts_T app_ptt_DoutPortCfg[] =
     {
         // Relays
         {CONTROLLINO_R0, "R0"}, // HE01
@@ -58,7 +53,7 @@ static const CFG_DoutPorts_T app_hsh_DoutPortCfg[] =
 };
 
 // HSH port configuration
-static const CFG_ports_T app_hsh_PortCfg[] =
+static const CFG_ports_T app_ptt_PortCfg[] =
     {
         // port name          direction
         // terminal output ports
@@ -81,7 +76,7 @@ static const CFG_ports_T app_hsh_PortCfg[] =
 };
 
 // HSH digital and analog input port configuration
-static const CFG_inputPorts_T app_hsh_inputPortCfg[] =
+static const CFG_inputPorts_T app_ptt_inputPortCfg[] =
     {
         {CONTROLLINO_AI0, CFG_DIGITAL, "AI00"},
         {CONTROLLINO_AI1, CFG_DIGITAL, "AI01"},
@@ -109,37 +104,37 @@ char *paramArr[] = {"STM01_cpos", "STM01_dis2go", "STM02_cpos", "STM02_dis2go", 
 float temp_[3] = {};
 static uint8_t cnt100ms = 0;
 static bool ledFlag = false;
-volatile uint32_t app_hsh_int0_cnt = 0;
-volatile uint32_t app_hsh_int1_cnt = 0;
+volatile uint32_t app_ptt_int0_cnt = 0;
+volatile uint32_t app_ptt_int1_cnt = 0;
 
 // IN0 counter
-// void app_hsh_loop_tests();
+// void app_ptt_loop_tests();
 
 // IN0 interrrupt handler
-void app_hsh_int0_isr()
+void app_ptt_int0_isr()
 {
-  app_hsh_int0_cnt++;
+  app_ptt_int0_cnt++;
 }
 // IN1 interrrupt handler
-void app_hsh_int1_isr()
+void app_ptt_int1_isr()
 {
-  app_hsh_int1_cnt++;
+  app_ptt_int1_cnt++;
 }
 
 /* --- Global Functions ----------------------------------------------------- */
 
 // \par Description: Module initialization
-void app_hsh_init()
+void app_ptt_init()
 {
   // digital output port initialization
-  port_initDoutPorts(app_hsh_DoutPortCfg, sizeof(app_hsh_DoutPortCfg) / sizeof(CFG_DoutPorts_T));
+  port_initDoutPorts(app_ptt_DoutPortCfg, sizeof(app_ptt_DoutPortCfg) / sizeof(CFG_DoutPorts_T));
   // port initialization
-  port_init(app_hsh_PortCfg, sizeof(app_hsh_PortCfg) / sizeof(CFG_ports_T));
+  port_init(app_ptt_PortCfg, sizeof(app_ptt_PortCfg) / sizeof(CFG_ports_T));
 
   // install IN0 interrupt
-  attachInterrupt(digitalPinToInterrupt(CONTROLLINO_IN0), app_hsh_int0_isr, FALLING);
+  attachInterrupt(digitalPinToInterrupt(CONTROLLINO_IN0), app_ptt_int0_isr, FALLING);
   // install IN1 interrupt
-  attachInterrupt(digitalPinToInterrupt(CONTROLLINO_IN1), app_hsh_int1_isr, FALLING);
+  attachInterrupt(digitalPinToInterrupt(CONTROLLINO_IN1), app_ptt_int1_isr, FALLING);
 
   // PT100 measurement initialization
   // thermo_.init(0, MAX31865_3WIRE);
@@ -148,113 +143,72 @@ void app_hsh_init()
 }
 
 // 100ms task (HSH -> PC)
-void app_hsh_task100ms(JsonDocument &doc)
+void app_ptt_task100ms(JsonDocument &doc)
 {
-  // Get temperatures all 1 seconds, time-shifted
-  // temp_[0] = thermo_.cyclic100ms(0);
-  // switch (cnt100ms)
-  // {
-  // case 0:
-  //   temp_[0] = thermo_.cyclic100ms(0);
-  //   break;
-  // case 1:
-  //   temp_[1] = thermo_.cyclic100ms(1);
-  //   break;
-  // case 2:
-  //   temp_[2] = thermo_.cyclic100ms(2);
-  //   break;
-  // }
-
-  // cnt100ms = (cnt100ms < 2) ? cnt100ms + 1 : 0;
-
-  // doc["ET1"] = temp_[0];
-  //  doc["ET2"] = temp_[1];
-  //  doc["ET3"] = temp_[2];
-
-  // if (sensor_chipOK())
-  // {
-  //   doc["E21"] = sensor_getRawDiffA();
-  //   doc["E20"] = sensor_getRawCurA(); // durchflusssensor
-  //   doc["E19"] = sensor_getRawCurB(); // drucksensor
-  // }
-
-  // concatinate keys
+  // to send dis2go & cpos to server
   // for (const auto &element : doc_rcv_slave.as<JsonObject>())
   // {
   //   const char *key = element.key().c_str();
-  //   // const char *value = element.value().as<const char *>();
   //   const long value = element.value();
-  //   doc[key] = value;
+  //   int ikey = atoi(key);
+  //   doc[paramArr[ikey]] = value;
   // }
-  // to send dis2go & cpos to server
-  for (const auto &element : doc_rcv_slave.as<JsonObject>())
-  {
-    const char *key = element.key().c_str();
-    const long value = element.value();
-    int ikey = atoi(key);
-    doc[paramArr[ikey]] = value;
-  }
   //  String str_snd = "";
   //  serializeJson(doc, str_snd);
   //  Serial.println(str_snd);
 
   // Read analog and digital input ports
-  for (uint8_t n = 0; n < sizeof(app_hsh_inputPortCfg) / sizeof(CFG_inputPorts_T); n++)
+  for (uint8_t n = 0; n < sizeof(app_ptt_inputPortCfg) / sizeof(CFG_inputPorts_T); n++)
   {
-    char *name = app_hsh_inputPortCfg[n].name;
-    uint8_t mode = app_hsh_inputPortCfg[n].mode;
-    uint8_t portNum = app_hsh_inputPortCfg[n].portNum;
+    char *name = app_ptt_inputPortCfg[n].name;
+    uint8_t mode = app_ptt_inputPortCfg[n].mode;
+    uint8_t portNum = app_ptt_inputPortCfg[n].portNum;
 
     doc[name] = (CFG_ANALOG == mode) ? analogRead(portNum) : digitalRead(portNum);
   }
   // doc["AI12"] = map(doc["AI12"], 0, 1023, 0, 300);
-  doc["IN0"] = app_hsh_int0_cnt;
+  doc["IN0"] = app_ptt_int0_cnt;
   doc["vers"] = SW_VERSION; // firmware version info
 }
 
 // 1s task
-void app_hsh_task1s()
+void app_ptt_task1s()
 {
   // flash Test LED 1 of MCP23017
   //  port_writeMcp(TEST_LED1, ledFlag);
   //  ledFlag = !ledFlag;
-  //  app_hsh_loop_tests();
+  //  app_ptt_loop_tests();
 }
 
 // sets the values (PC -> HSH)
-void app_hsh_setValues(JsonDocument &doc)
+void app_ptt_setValues(JsonDocument &doc)
 {
   // Write digital output ports
-  for (uint8_t n = 0; n < sizeof(app_hsh_DoutPortCfg) / sizeof(CFG_DoutPorts_T); n++)
+  for (uint8_t n = 0; n < sizeof(app_ptt_DoutPortCfg) / sizeof(CFG_DoutPorts_T); n++)
   {
-    uint8_t portNum = app_hsh_DoutPortCfg[n].portNum;
-    char *name = app_hsh_DoutPortCfg[n].name;
+    uint8_t portNum = app_ptt_DoutPortCfg[n].portNum;
+    char *name = app_ptt_DoutPortCfg[n].name;
 
     digitalWrite(portNum, doc[name]);
   }
-
-  // run stepper motors
-  stepper_process(doc);
-  // run servo motors
-  // servo_process(doc);
 
   // port_writeMcp(TEST_LED4, LOW);
 }
 
 // Enter save state, reset outputs
-void app_hsh_enterSaveState()
+void app_ptt_enterSaveState()
 {
   // Set digital output ports
-  for (uint8_t n = 0; n < sizeof(app_hsh_DoutPortCfg) / sizeof(CFG_DoutPorts_T); n++)
+  for (uint8_t n = 0; n < sizeof(app_ptt_DoutPortCfg) / sizeof(CFG_DoutPorts_T); n++)
   {
-    uint8_t portNum = app_hsh_DoutPortCfg[n].portNum;
+    uint8_t portNum = app_ptt_DoutPortCfg[n].portNum;
 
     digitalWrite(portNum, LOW);
   }
 }
 
 // Tests in the main loop
-void app_hsh_loop_tests()
+void app_ptt_loop_tests()
 {
   // float temp_[3] = {thermo_.readtemp_(0), thermo_.readtemp_(1), thermo_.readtemp_(2)};
 
@@ -265,16 +219,16 @@ void app_hsh_loop_tests()
   // Serial.println(str);
 }
 
-int app_hsh_loop_ReadPort(char *portName)
+int app_ptt_loop_ReadPort(char *portName)
 {
-  for (uint8_t n = 0; n < sizeof(app_hsh_inputPortCfg) / sizeof(CFG_inputPorts_T); n++)
+  for (uint8_t n = 0; n < sizeof(app_ptt_inputPortCfg) / sizeof(CFG_inputPorts_T); n++)
   {
-    char *name = app_hsh_inputPortCfg[n].name;
+    char *name = app_ptt_inputPortCfg[n].name;
     if (name != portName)
       continue;
 
-    uint8_t mode = app_hsh_inputPortCfg[n].mode;
-    uint8_t portNum = app_hsh_inputPortCfg[n].portNum;
+    uint8_t mode = app_ptt_inputPortCfg[n].mode;
+    uint8_t portNum = app_ptt_inputPortCfg[n].portNum;
 
     return (CFG_ANALOG == mode) ? analogRead(portNum) : digitalRead(portNum);
   }

@@ -44,7 +44,7 @@
 #include "app_gal.h"
 #include "app_coc.h"
 #include "app_sns.h"
-#include "app_hsh.h"
+#include "app_ptt.h"
 
 #include "config.h"
 
@@ -93,7 +93,7 @@ static String jsonString       = "";
 long last_millis               = 0;
 long _now                      = millis();
 int _cyctime                   = last_millis == 0 ? 0: _now - last_millis;
-const char moduleTypeStr[4][5] = {"GAL-", "COC-", "SNS-", "HSH-"};
+const char moduleTypeStr[4][5] = {"GAL-", "COC-", "SNS-", "PTT-"};
 String _host_ip;
 String _device_name;
 // volatile byte state = LOW;
@@ -134,19 +134,13 @@ void setup()
   // select application
   switch (port_getModuleType())
   {
-  case CFG_MODULE_HSH: // remove the ther modules from the declaration
-    app_hsh_init();
+  case CFG_MODULE_PTT: // remove the ther modules from the declaration
+    app_ptt_init();
     break;
   default:
     break;
   }
   setup_network();
-
-  // init stepper motors
-  stepper_init();
-
-  // init servo motors
-  servo_init();
 
   // Timer initialitation
   timer.init(100);
@@ -286,7 +280,7 @@ void setup_network()
     // try to congifure using static IP address:
     switch (port_getModuleType())
     {
-    case CFG_MODULE_HSH:
+    case CFG_MODULE_PTT:
       Ethernet.begin((uint8_t *)at24mac402_readMac(), hsh_static_ip, static_dns); //,
       break;
     default:
@@ -397,8 +391,8 @@ bool rcvDataFromEth()
     //  select application for set value
     switch (port_getModuleType())
     {
-    case CFG_MODULE_HSH:
-      app_hsh_setValues(doc_recv_cmd);
+    case CFG_MODULE_PTT:
+      app_ptt_setValues(doc_recv_cmd);
       break;
     default:
       break;
@@ -420,8 +414,8 @@ void scheduler()
     // select application
     switch (port_getModuleType())
     {
-    case CFG_MODULE_HSH:
-      app_hsh_task100ms(doc_send_cmd);
+    case CFG_MODULE_PTT:
+      app_ptt_task100ms(doc_send_cmd);
       break;
     default:
       break;
@@ -435,10 +429,10 @@ void scheduler()
     // select application
     switch (port_getModuleType())
     {
-    case CFG_MODULE_HSH:
+    case CFG_MODULE_PTT:
       if (saveStateFlag)
-        app_hsh_enterSaveState();
-      app_hsh_task1s();
+        app_ptt_enterSaveState();
+      app_ptt_task1s();
       break;
     default:
       break;
@@ -475,7 +469,7 @@ void httpRequest()
       // port_writeAdpd_LED_blue(1);
 
       serializeJson(doc_send_cmd, jsonString);
-      // Serial.println(jsonString);
+      //Serial.println(jsonString);
 
       // send the HTTP GET request:
       client.println("POST /device/data HTTP/1.1");

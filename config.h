@@ -72,11 +72,6 @@ enum
   CFG_DIGITAL,
   CFG_ANALOG
 };
-enum
-{
-  CFG_FORWARD_DIR = 1,
-  CFG_BCKWARD_DIR = 2,
-};
 
 // port definition
 typedef struct

@@ -8,7 +8,8 @@
  *
  * \brief
  *
- * used libraries:  ArduinoJson 6.19.1
+ * used libraries:  //ArduinoJson 6.19.1
+                    ArduinoJson 7.4.2
                     Controllino 3.0.7
                     OneWire 2.3.6
                     DallasTemperature 3.9.0
@@ -388,7 +389,7 @@ bool rcvDataFromEth()
       Serial.println("Error in doc_recv_cmd  deserializeJson ...." + req_str);
       return false;
     }
-    if (doc_recv_cmd["status"] != 1)
+    if ((doc_recv_cmd["status"] | -1) != 1)
       return false;
     // Serial.println(req_str);
 

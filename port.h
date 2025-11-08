@@ -27,7 +27,7 @@
 
 void port_init(const CFG_ports_T *ports, uint8_t portNum);
 void port_initDoutPorts(const CFG_DoutPorts_T *ports, uint8_t portNum);
-
+void port_resetDoutPorts(const CFG_DoutPorts_T *ports, uint8_t portNum);
 
 void port_initMcp();
 void port_setOutput(uint8_t portNum, uint8_t state);

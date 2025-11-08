@@ -3,12 +3,12 @@
  ******************************************************************************
  * \file Galvanic-NT-Arduino-uno.ino
  ******************************************************************************
- * Copyright (C) NWI GmbH, 2023
+ * Copyright (C) NWI GmbH, 2025
  ******************************************************************************
  *
  * \brief
  *
- * used libraries:  //ArduinoJson 6.19.1
+ * used libraries:  
                     ArduinoJson 7.4.2
                     Controllino 3.0.7
                     OneWire 2.3.6

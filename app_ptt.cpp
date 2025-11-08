@@ -28,29 +28,28 @@
 static const CFG_DoutPorts_T app_ptt_DoutPortCfg[] =
     {
         // Relays
-        {CONTROLLINO_R0, "R0"}, // HE01
-        {CONTROLLINO_R1, "R1"}, // PV01
-        {CONTROLLINO_R2, "R2"}, // LM01
-        {CONTROLLINO_R3, "R3"},
-        {CONTROLLINO_R4, "R4"},
-        {CONTROLLINO_R5, "R5"},
-        {CONTROLLINO_R6, "R6"},
-        {CONTROLLINO_R7, "R7"},
-        {CONTROLLINO_R8, "R8"},
-        {CONTROLLINO_R9, "R9"},
+        {CONTROLLINO_R0, "R0", LOW}, // HE01
+        {CONTROLLINO_R1, "R1", LOW}, // PV01
+        {CONTROLLINO_R2, "R2", LOW}, // LM01
+        {CONTROLLINO_R3, "R3", LOW},
+        {CONTROLLINO_R4, "R4", LOW},
+        {CONTROLLINO_R5, "R5", LOW},
+        {CONTROLLINO_R6, "R6", LOW},
+        {CONTROLLINO_R7, "R7", LOW},
+        {CONTROLLINO_R8, "R8", LOW},
+        {CONTROLLINO_R9, "R9", LOW},
 
         // D0 .. D7
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_00, "DO0"},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_01, "DO1"},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_02, "DO2"},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_03, "DO3"},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_04, "DO4"},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_05, "DO5"},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_06, "DO6"},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_07, "DO7"},
-        {CONTROLLINO_AO0, "AO0"},
-        {CONTROLLINO_AO1, "DO1"},
-        
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_00, "DO0", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_01, "DO1", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_02, "DO2", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_03, "DO3", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_04, "DO4", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_05, "DO5", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_06, "DO6", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_07, "DO7", LOW},
+        {CONTROLLINO_AO0, "AO0", LOW},
+        {CONTROLLINO_AO1, "AO1", LOW},
 
         // {CONTROLLINO_AI0, "AI00"}, // BUZZER
 };
@@ -68,7 +67,7 @@ static const CFG_ports_T app_ptt_PortCfg[] =
         {CONTROLLINO_DI1, INPUT_PULLUP},
         {CONTROLLINO_DI2, INPUT_PULLUP},
         {CONTROLLINO_DI3, INPUT_PULLUP},
-};
+ };
 
 // PTT digital and analog input port configuration
 static const CFG_inputPorts_T app_ptt_inputPortCfg[] =
@@ -85,20 +84,23 @@ static const CFG_inputPorts_T app_ptt_inputPortCfg[] =
         {CONTROLLINO_AI9, CFG_ANALOG, "AI09"},
         {CONTROLLINO_AI10, CFG_ANALOG, "AI10"},
         {CONTROLLINO_AI11, CFG_ANALOG, "AI11"},
-        
-        {CONTROLLINO_AI12, CFG_ANALOG, "AI12"}, 
+
+        {CONTROLLINO_AI12, CFG_ANALOG, "AI12"},
         {CONTROLLINO_AI13, CFG_ANALOG, "AI13"},
 
         {CONTROLLINO_DI0, CFG_DIGITAL, "DI0"},
         {CONTROLLINO_DI1, CFG_DIGITAL, "DI1"},
         {CONTROLLINO_DI2, CFG_DIGITAL, "DI2"},
-        {CONTROLLINO_DI3, CFG_DIGITAL, "DI3"}};
 
-char *paramArr[] = {"STM01_cpos", "STM01_dis2go", "STM02_cpos", "STM02_dis2go", "STM03_cpos", "STM03_dis2go", "STM04_cpos", "STM04_dis2go"};
+        {CONTROLLINO_IN0, CFG_DIGITAL, "IN0"},
+        {CONTROLLINO_IN1, CFG_DIGITAL, "IN1"},
+};
+
+// char *paramArr[] = {"STM01_cpos", "STM01_dis2go", "STM02_cpos", "STM02_dis2go", "STM03_cpos", "STM03_dis2go", "STM04_cpos", "STM04_dis2go"};
 // Max31865 thermo_;
-float temp_[3] = {};
-static uint8_t cnt100ms = 0;
-static bool ledFlag = false;
+// float temp_[3] = {};
+// static uint8_t cnt100ms = 0;
+// static bool ledFlag = false;
 volatile uint32_t app_ptt_int0_cnt = 0;
 volatile uint32_t app_ptt_int1_cnt = 0;
 
@@ -109,6 +111,8 @@ volatile uint32_t app_ptt_int1_cnt = 0;
 void app_ptt_int0_isr()
 {
   app_ptt_int0_cnt++;
+
+  port_resetDoutPorts(app_ptt_DoutPortCfg, sizeof(app_ptt_DoutPortCfg) / sizeof(CFG_DoutPorts_T));
 }
 // IN1 interrrupt handler
 void app_ptt_int1_isr()
@@ -123,6 +127,8 @@ void app_ptt_init()
 {
   // digital output port initialization
   port_initDoutPorts(app_ptt_DoutPortCfg, sizeof(app_ptt_DoutPortCfg) / sizeof(CFG_DoutPorts_T));
+  // reset digital output ports
+  port_resetDoutPorts(app_ptt_DoutPortCfg, sizeof(app_ptt_DoutPortCfg) / sizeof(CFG_DoutPorts_T));
   // port initialization
   port_init(app_ptt_PortCfg, sizeof(app_ptt_PortCfg) / sizeof(CFG_ports_T));
 
@@ -162,8 +168,8 @@ void app_ptt_task100ms(JsonDocument &doc)
     doc[name] = (CFG_ANALOG == mode) ? analogRead(portNum) : digitalRead(portNum);
   }
   // doc["AI12"] = map(doc["AI12"], 0, 1023, 0, 300);
-  doc["IN0"] = app_ptt_int0_cnt;
-  doc["vers"] = SW_VERSION; // firmware version info
+  doc["heartbeat"] =  millis() / 1000;
+  doc["swver"] = SW_VERSION; // firmware version info
 }
 
 // 1s task

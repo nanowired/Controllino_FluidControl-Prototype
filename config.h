@@ -79,6 +79,7 @@ typedef struct
 {
   uint8_t portNum;
   char *name;
+  uint8_t defaultState; // LOW or HIGH
 } CFG_DoutPorts_T;
 
 // digital and analog input port definition

@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file port.cpp
  ******************************************************************************
- * Copyright (C) embeddeers GmbH, 2020
+ * Copyright (C) embeddeers GmbH, 2025
  ******************************************************************************
  *
  * \brief  Port access implementation 
@@ -71,6 +71,14 @@ void port_initDoutPorts(const CFG_DoutPorts_T *ports, uint8_t portNum)
   for (uint8_t p = 0; p < portNum; p++)
   {
     pinMode(ports[p].portNum, OUTPUT);
+  }
+}
+// reset of the digital output ports
+void port_resetDoutPorts(const CFG_DoutPorts_T *ports, uint8_t portNum)
+{
+  for (uint8_t p = 0; p < portNum; p++)
+  {
+    digitalWrite(ports[p].portNum, ports[p].defaultState);
   }
 }
 

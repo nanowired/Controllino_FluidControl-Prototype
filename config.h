@@ -28,7 +28,7 @@
 #define HW_INFO "Controllino Maxi Controller"
 #define SW_VERSION "1.3"
 
-// module type
+// module type MCP jumper settings
 #define CFG_MODULE_PTT      (3)          // PTT Controller, no Extension Box
 
 #define SPI1_SS             (53)         // SPI1

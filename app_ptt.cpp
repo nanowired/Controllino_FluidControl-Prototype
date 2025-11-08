@@ -24,7 +24,7 @@
 #include "app_ptt.h"
 
 /* --- Local Variables ------------------------------------------------------ */
-// HSH digital output port configuration
+// PTT digital output port configuration
 static const CFG_DoutPorts_T app_ptt_DoutPortCfg[] =
     {
         // Relays
@@ -48,11 +48,14 @@ static const CFG_DoutPorts_T app_ptt_DoutPortCfg[] =
         {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_05, "DO5"},
         {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_06, "DO6"},
         {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_07, "DO7"},
+        {CONTROLLINO_AO0, "AO0"},
+        {CONTROLLINO_AO1, "DO1"},
+        
 
         // {CONTROLLINO_AI0, "AI00"}, // BUZZER
 };
 
-// HSH port configuration
+// PTT port configuration
 static const CFG_ports_T app_ptt_PortCfg[] =
     {
         // port name          direction
@@ -65,33 +68,25 @@ static const CFG_ports_T app_ptt_PortCfg[] =
         {CONTROLLINO_DI1, INPUT_PULLUP},
         {CONTROLLINO_DI2, INPUT_PULLUP},
         {CONTROLLINO_DI3, INPUT_PULLUP},
-        {CONTROLLINO_AI0, INPUT_PULLUP}, // IS01
-        {CONTROLLINO_AI1, INPUT_PULLUP}, // IS02
-        {CONTROLLINO_AI2, INPUT_PULLUP}, // IS03
-        {CONTROLLINO_AI3, INPUT_PULLUP}, // IS04
-        {CONTROLLINO_AI4, INPUT_PULLUP}, // IS05
-        {CONTROLLINO_AI5, INPUT_PULLUP}, // IS06
-        {CONTROLLINO_AI6, INPUT_PULLUP}, // IS07
-        {CONTROLLINO_AI7, INPUT_PULLUP}, // IS08
 };
 
-// HSH digital and analog input port configuration
+// PTT digital and analog input port configuration
 static const CFG_inputPorts_T app_ptt_inputPortCfg[] =
     {
-        {CONTROLLINO_AI0, CFG_DIGITAL, "AI00"},
-        {CONTROLLINO_AI1, CFG_DIGITAL, "AI01"},
-        {CONTROLLINO_AI2, CFG_DIGITAL, "AI02"},
-        {CONTROLLINO_AI3, CFG_DIGITAL, "AI03"},
-        {CONTROLLINO_AI4, CFG_DIGITAL, "AI04"},
-        {CONTROLLINO_AI5, CFG_DIGITAL, "AI05"},
-        {CONTROLLINO_AI6, CFG_DIGITAL, "AI06"},
-        {CONTROLLINO_AI7, CFG_DIGITAL, "AI07"},
+        {CONTROLLINO_AI0, CFG_ANALOG, "AI00"},
+        {CONTROLLINO_AI1, CFG_ANALOG, "AI01"},
+        {CONTROLLINO_AI2, CFG_ANALOG, "AI02"},
+        {CONTROLLINO_AI3, CFG_ANALOG, "AI03"},
+        {CONTROLLINO_AI4, CFG_ANALOG, "AI04"},
+        {CONTROLLINO_AI5, CFG_ANALOG, "AI05"},
+        {CONTROLLINO_AI6, CFG_ANALOG, "AI06"},
+        {CONTROLLINO_AI7, CFG_ANALOG, "AI07"},
         {CONTROLLINO_AI8, CFG_ANALOG, "AI08"},
         {CONTROLLINO_AI9, CFG_ANALOG, "AI09"},
         {CONTROLLINO_AI10, CFG_ANALOG, "AI10"},
         {CONTROLLINO_AI11, CFG_ANALOG, "AI11"},
-
-        {CONTROLLINO_AI12, CFG_ANALOG, "AI12"}, // HS01
+        
+        {CONTROLLINO_AI12, CFG_ANALOG, "AI12"}, 
         {CONTROLLINO_AI13, CFG_ANALOG, "AI13"},
 
         {CONTROLLINO_DI0, CFG_DIGITAL, "DI0"},

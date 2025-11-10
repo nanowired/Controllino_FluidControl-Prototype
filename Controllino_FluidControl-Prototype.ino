@@ -21,8 +21,7 @@
  *
  * \par Purpose
  *
- *
- *
+ *   
  *
  ******************************************************************************
  *
@@ -92,7 +91,9 @@ static String jsonString       = "";
 long last_millis               = 0;
 long _now                      = millis();
 int _cyctime                   = last_millis == 0 ? 0: _now - last_millis;
-const char moduleTypeStr[4][5] = {"GAL-", "COC-", "SNS-", "PTT-"};
+// const char moduleTypeStr[4][5] = {"GAL-", "COC-", "SNS-", "PTT-"};
+constexpr const char *moduleTypeStr[] = {"PTT-"};
+
 String _host_ip;
 String _device_name;
 // volatile byte state = LOW;

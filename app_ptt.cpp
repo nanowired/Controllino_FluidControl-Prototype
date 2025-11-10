@@ -28,26 +28,26 @@
 static const CFG_DoutPorts_T app_ptt_DoutPortCfg[] =
     {
         // Relays
-        {CONTROLLINO_R0, "R0", LOW}, // HE01
-        {CONTROLLINO_R1, "R1", LOW}, // PV01
-        {CONTROLLINO_R2, "R2", LOW}, // LM01
-        {CONTROLLINO_R3, "R3", LOW},
-        {CONTROLLINO_R4, "R4", LOW},
-        {CONTROLLINO_R5, "R5", LOW},
+        {CONTROLLINO_R0, "R0", LOW}, // QM-09
+        {CONTROLLINO_R1, "R1", LOW}, // QM-10
+        {CONTROLLINO_R2, "R2", LOW}, // QM-11
+        {CONTROLLINO_R3, "R3", LOW}, // MA-01
+        {CONTROLLINO_R4, "R4", LOW}, // MA-02
+        {CONTROLLINO_R5, "R5", LOW}, // MA-03
         {CONTROLLINO_R6, "R6", LOW},
         {CONTROLLINO_R7, "R7", LOW},
         {CONTROLLINO_R8, "R8", LOW},
         {CONTROLLINO_R9, "R9", LOW},
 
         // D0 .. D7
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_00, "DO0", LOW},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_01, "DO1", LOW},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_02, "DO2", LOW},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_03, "DO3", LOW},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_04, "DO4", LOW},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_05, "DO5", LOW},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_06, "DO6", LOW},
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_07, "DO7", LOW},
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_00, "DO0", LOW}, // QM-01
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_01, "DO1", LOW}, // QM-02 
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_02, "DO2", LOW}, // QM-03 
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_03, "DO3", LOW}, // QM-04
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_04, "DO4", LOW}, // QM-05
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_05, "DO5", LOW}, // QM-06
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_06, "DO6", LOW}, // QM-07
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_07, "DO7", LOW}, // QM-08
         {CONTROLLINO_AO0, "AO0", LOW},
         {CONTROLLINO_AO1, "AO1", LOW},
 
@@ -59,12 +59,12 @@ static const CFG_ports_T app_ptt_PortCfg[] =
     {
         // port name          direction
         // terminal output ports
-        {CONTROLLINO_IN0, INPUT_PULLUP},
+        {CONTROLLINO_IN0, INPUT_PULLUP}, // E-STOP
         {CONTROLLINO_IN1, INPUT_PULLUP},
 
         // terminal input ports with pull up resistor
-        {CONTROLLINO_DI0, INPUT_PULLUP},
-        {CONTROLLINO_DI1, INPUT_PULLUP},
+        {CONTROLLINO_DI0, INPUT_PULLUP}, // BG-01
+        {CONTROLLINO_DI1, INPUT_PULLUP}, // BG-02
         {CONTROLLINO_DI2, INPUT_PULLUP},
         {CONTROLLINO_DI3, INPUT_PULLUP},
  };
@@ -72,10 +72,10 @@ static const CFG_ports_T app_ptt_PortCfg[] =
 // PTT digital and analog input port configuration
 static const CFG_inputPorts_T app_ptt_inputPortCfg[] =
     {
-        {CONTROLLINO_AI0, CFG_ANALOG, "AI00"},
-        {CONTROLLINO_AI1, CFG_ANALOG, "AI01"},
-        {CONTROLLINO_AI2, CFG_ANALOG, "AI02"},
-        {CONTROLLINO_AI3, CFG_ANALOG, "AI03"},
+        {CONTROLLINO_AI0, CFG_ANALOG, "AI00"}, //BA-01
+        {CONTROLLINO_AI1, CFG_ANALOG, "AI01"}, //BA-02
+        {CONTROLLINO_AI2, CFG_ANALOG, "AI02"}, //BA-03
+        {CONTROLLINO_AI3, CFG_ANALOG, "AI03"}, //BP-01
         {CONTROLLINO_AI4, CFG_ANALOG, "AI04"},
         {CONTROLLINO_AI5, CFG_ANALOG, "AI05"},
         {CONTROLLINO_AI6, CFG_ANALOG, "AI06"},
@@ -99,7 +99,7 @@ static const CFG_inputPorts_T app_ptt_inputPortCfg[] =
 // char *paramArr[] = {"STM01_cpos", "STM01_dis2go", "STM02_cpos", "STM02_dis2go", "STM03_cpos", "STM03_dis2go", "STM04_cpos", "STM04_dis2go"};
 // Max31865 thermo_;
 // float temp_[3] = {};
-// static uint8_t cnt100ms = 0;
+// static unsigned long cnt100ms      = 0;
 // static bool ledFlag = false;
 volatile uint32_t app_ptt_int0_cnt = 0;
 volatile uint32_t app_ptt_int1_cnt = 0;
@@ -168,7 +168,7 @@ void app_ptt_task100ms(JsonDocument &doc)
     doc[name] = (CFG_ANALOG == mode) ? analogRead(portNum) : digitalRead(portNum);
   }
   // doc["AI12"] = map(doc["AI12"], 0, 1023, 0, 300);
-  doc["heartbeat"] =  millis() / 1000;
+  doc["heartbeat"] = millis() / 1000;;
   doc["swver"] = SW_VERSION; // firmware version info
 }
 

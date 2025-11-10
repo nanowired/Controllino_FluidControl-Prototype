@@ -55,8 +55,7 @@
 // IPAddress gal_static_ip(192, 168, 35, 20);    // remove
 // IPAddress coc_static_ip(192, 168, 35, 21);    // remove
 // IPAddress sns_static_ip(192, 168, 35, 22);    // remove
-// IPAddress hsh_static_ip(192, 168, 0, 105);
-
+// IPAddress hsh_static_ip(192, 168, 0, 105
 // J
 // IPAddress server_static_ip(169, 254, 212, 188);
 // IPAddress hsh_static_ip(169, 254, 212, 190);
@@ -65,7 +64,7 @@
 
 // B
 IPAddress server_static_ip(192, 168, 35, 10);
-IPAddress ptt_static_ip(192, 168, 35, 23);
+IPAddress ptt_static_ip(192, 168, 35, 25);
 IPAddress static_dns(192, 168, 0, 1);
 IPAddress server_ip(192, 168, 35, 10);
 

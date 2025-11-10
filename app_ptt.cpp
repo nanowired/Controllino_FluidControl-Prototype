@@ -9,7 +9,7 @@
  * \brief  PTT Contoller Application  implementation
  *
  * \par Purpose
- *
+ * Author: Nanowired DEV Team
  *
  ******************************************************************************
  *

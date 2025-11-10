@@ -64,10 +64,10 @@
 // IPAddress server_ip(169, 254, 212, 188);
 
 // B
-IPAddress server_static_ip(192, 168, 0, 110);
-IPAddress hsh_static_ip(192, 168, 0, 200);
+IPAddress server_static_ip(192, 168, 35, 10);
+IPAddress ptt_static_ip(192, 168, 35, 23);
 IPAddress static_dns(192, 168, 0, 1);
-IPAddress server_ip(192, 168, 0, 110);
+IPAddress server_ip(192, 168, 35, 10);
 
 // initialize the library instance:
 EthernetClient client;
@@ -281,7 +281,7 @@ void setup_network()
     switch (port_getModuleType())
     {
     case CFG_MODULE_PTT:
-      Ethernet.begin((uint8_t *)at24mac402_readMac(), hsh_static_ip, static_dns); //,
+      Ethernet.begin((uint8_t *)at24mac402_readMac(), ptt_static_ip, static_dns); //,
       break;
     default:
       break;

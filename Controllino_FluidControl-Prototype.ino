@@ -461,7 +461,7 @@ void httpRequest()
   //  This will free the socket on the WiFi shield
   client.stop();
   // if there's a successful connection:
-  if (client.connect(server_ip, 3333))
+  if (client.connect(server_ip, 3334))
   {
     // Serial.println(F("connected"));
     if (!(doc_send_cmd.isNull()))

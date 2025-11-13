@@ -387,7 +387,7 @@ bool rcvDataFromEth()
       return false;
     // Serial.println(req_str);
 
-    // port_writeAdpd_LED_yellow(1);
+    port_writeAdpd_LED_yellow(1);
     //  select application for set value
     switch (port_getModuleType())
     {
@@ -397,7 +397,7 @@ bool rcvDataFromEth()
     default:
       break;
     }
-    // port_writeAdpd_LED_yellow(0);
+    port_writeAdpd_LED_yellow(0);
     // clear request string
     req_str = "";
     return true;
@@ -438,7 +438,7 @@ void scheduler()
       break;
     }
 
-    // port_toggleAdpd_LED_green();
+    port_toggleAdpd_LED_green();
     flag1s = false;
   }
 }
@@ -461,12 +461,13 @@ void httpRequest()
   //  This will free the socket on the WiFi shield
   client.stop();
   // if there's a successful connection:
-  if (client.connect(server_ip, 3334))
+  if (client.connect(server_ip, 3344))
   {
     // Serial.println(F("connected"));
     if (!(doc_send_cmd.isNull()))
     {
-      // port_writeAdpd_LED_blue(1);
+      port_writeAdpd_LED_red(0);
+      port_writeAdpd_LED_blue(1);
 
       serializeJson(doc_send_cmd, jsonString);
       //Serial.println(jsonString);
@@ -496,13 +497,16 @@ void httpRequest()
       // Send the JSON string
       client.println(jsonString);
       jsonString = "";
-      // port_writeAdpd_LED_blue(0);
+      port_writeAdpd_LED_blue(0);
     }
   }
   else
   {
     Serial.print(F("server not connected "));
     Serial.println(packet_counter);
+    port_toggleAdpd_LED_red();
+(0);
+
   }
 }
 

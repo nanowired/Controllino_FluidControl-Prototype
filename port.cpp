@@ -48,6 +48,13 @@ enum
   PORT_ADPT_LED6_R,
   PORT_ADPT_LED7_R
 };
+enum
+{
+  PORT_PANEL_LED_G = CONTROLLINO_AI6,
+  PORT_PANEL_LED_Y = CONTROLLINO_AI7,
+  PORT_PANEL_LED_B = CONTROLLINO_AI8,
+  PORT_PANEL_LED_R = CONTROLLINO_AI9,
+};
 
 Adafruit_MCP23X17 mcp;
 bool port_MCPexists = false; // true: MCP exists, false: MCP not found
@@ -255,38 +262,55 @@ uint8_t port_readMcpAdpdCfg()
 
 void port_writeAdpd_LED_green(uint8_t value)
 {
+  digitalWrite(PORT_PANEL_LED_G, value ? 1 : 0);
   port_writeMcpAdpd(PORT_ADPT_LED1_G, value ? 0 : 1);
 }
 
 void port_toggleAdpd_LED_green()
 {
+  auto led  = digitalRead(PORT_PANEL_LED_G);
+  digitalWrite(PORT_PANEL_LED_G, led ? 1 : 0);
   port_writeMcpAdpd(PORT_ADPT_LED1_G, !port_readMcpAdpd(PORT_ADPT_LED1_G));
 }
 
 void port_writeAdpd_LED_blue(uint8_t value)
 {
+  digitalWrite(PORT_PANEL_LED_B, value ? 1 : 0);
   port_writeMcpAdpd(PORT_ADPT_LED2_B, value ? 0 : 1);
 }
 
 void port_writeAdpd_LED_yellow(uint8_t value)
 {
+  digitalWrite(PORT_PANEL_LED_Y, value ? 1 : 0);
   port_writeMcpAdpd(PORT_ADPT_LED3_G, value ? 0 : 1);
   port_writeMcpAdpd(PORT_ADPT_LED4_R, value ? 0 : 1);
 }
 
 void port_writeAdpd_LED_magenta(uint8_t value)
 {
+  digitalWrite(PORT_PANEL_LED_Y, value ? 1 : 0);
   port_writeMcpAdpd(PORT_ADPT_LED5_B, value ? 0 : 1);
   port_writeMcpAdpd(PORT_ADPT_LED6_R, value ? 0 : 1);
 }
 
 void port_writeAdpd_LED_red(uint8_t value)
 {
+  digitalWrite(PORT_PANEL_LED_R, value ? 1 : 0);
   port_writeMcpAdpd(PORT_ADPT_LED7_R, value ? 0 : 1);
+}
+void port_toggleAdpd_LED_red()
+{
+  auto led  = digitalRead(PORT_PANEL_LED_R);
+  digitalWrite(PORT_PANEL_LED_R, led ? 0 : 1);
 }
 
 void port_writeAdpd_LEDs(uint8_t value)
 {
+    digitalWrite(PORT_PANEL_LED_B, value ? 1 : 0);
+    digitalWrite(PORT_PANEL_LED_G, value ? 1 : 0);
+    digitalWrite(PORT_PANEL_LED_Y, value ? 1 : 0);
+    digitalWrite(PORT_PANEL_LED_R, value ? 1 : 0);
+    
     port_writeAdpd_LED_green(value & 16);
     port_writeAdpd_LED_blue(value & 8);
     port_writeAdpd_LED_yellow(value & 4);

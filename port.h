@@ -48,6 +48,7 @@ void port_writeAdpd_LED_blue(uint8_t value);
 void port_writeAdpd_LED_yellow(uint8_t value);
 void port_writeAdpd_LED_magenta(uint8_t value);
 void port_writeAdpd_LED_red(uint8_t value);
+void port_toggleAdpd_LED_red();
 void port_writeAdpd_LEDs(uint8_t value);
 
 #endif // EMB_PORT_H_

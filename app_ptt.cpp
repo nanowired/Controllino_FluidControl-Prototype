@@ -28,28 +28,32 @@
 static const CFG_DoutPorts_T app_ptt_DoutPortCfg[] =
     {
         // Relays
-        {CONTROLLINO_R0, "R0", LOW}, // QM-09
-        {CONTROLLINO_R1, "R1", LOW}, // QM-10
-        {CONTROLLINO_R2, "R2", LOW}, // QM-11
-        {CONTROLLINO_R3, "R3", LOW}, // MA-01
-        {CONTROLLINO_R4, "R4", LOW}, // MA-02
-        {CONTROLLINO_R5, "R5", LOW}, // MA-03
-        {CONTROLLINO_R6, "R6", LOW},
-        {CONTROLLINO_R7, "R7", LOW},
-        {CONTROLLINO_R8, "R8", LOW},
-        {CONTROLLINO_R9, "R9", LOW},
+        {CONTROLLINO_R0, "R0", LOW, false}, // QM-09
+        {CONTROLLINO_R1, "R1", LOW, false}, // QM-10
+        {CONTROLLINO_R2, "R2", LOW, false}, // QM-11
+        {CONTROLLINO_R3, "R3", LOW, false}, // MA-01
+        {CONTROLLINO_R4, "R4", LOW, false}, // MA-02
+        {CONTROLLINO_R5, "R5", LOW, false}, // MA-03
+        {CONTROLLINO_R6, "R6", LOW, false},
+        {CONTROLLINO_R7, "R7", LOW, false},
+        {CONTROLLINO_R8, "R8", LOW, false},
+        {CONTROLLINO_R9, "R9", LOW, false},
 
         // D0 .. D7
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_00, "DO0", LOW}, // QM-01
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_01, "DO1", LOW}, // QM-02 
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_02, "DO2", LOW}, // QM-03 
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_03, "DO3", LOW}, // QM-04
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_04, "DO4", LOW}, // QM-05
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_05, "DO5", LOW}, // QM-06
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_06, "DO6", LOW}, // QM-07
-        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_07, "DO7", LOW}, // QM-08
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_00, "DO0", LOW, false}, // QM-01
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_01, "DO1", LOW, false}, // QM-02
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_02, "DO2", LOW, false}, // QM-03
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_03, "DO3", LOW, false}, // QM-04
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_04, "DO4", LOW, false}, // QM-05
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_05, "DO5", LOW, false}, // QM-06
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_06, "DO6", LOW, false}, // QM-07
+        {CONTROLLINO_SCREW_TERMINAL_DIGITAL_OUT_07, "DO7", LOW, false}, // QM-08
         {CONTROLLINO_AO0, "AO0", LOW},
         {CONTROLLINO_AO1, "AO1", LOW},
+        {CONTROLLINO_AI6, "AI6", LOW, true}, // PORT_PANEL_LED_G
+        {CONTROLLINO_AI7, "AI7", LOW, true}, // PORT_PANEL_LED_Y
+        {CONTROLLINO_AI8, "AI8", LOW, true}, // PORT_PANEL_LED_B
+        {CONTROLLINO_AI9, "AI9", LOW, true}, // PORT_PANEL_LED_R
 
         // {CONTROLLINO_AI0, "AI00"}, // BUZZER
 };
@@ -78,10 +82,10 @@ static const CFG_inputPorts_T app_ptt_inputPortCfg[] =
         {CONTROLLINO_AI3, CFG_ANALOG, "AI03"}, //BP-01
         {CONTROLLINO_AI4, CFG_ANALOG, "AI04"},
         {CONTROLLINO_AI5, CFG_ANALOG, "AI05"},
-        {CONTROLLINO_AI6, CFG_ANALOG, "AI06"},
-        {CONTROLLINO_AI7, CFG_ANALOG, "AI07"},
-        {CONTROLLINO_AI8, CFG_ANALOG, "AI08"},
-        {CONTROLLINO_AI9, CFG_ANALOG, "AI09"},
+        // {CONTROLLINO_AI6, CFG_ANALOG, "AI06"}, output PORT_PANEL_LED_G
+        // {CONTROLLINO_AI7, CFG_ANALOG, "AI07"}, output PORT_PANEL_LED_Y
+        // {CONTROLLINO_AI8, CFG_ANALOG, "AI08"}, output PORT_PANEL_LED_B
+        // {CONTROLLINO_AI9, CFG_ANALOG, "AI09"}, output PORT_PANEL_LED_R
         {CONTROLLINO_AI10, CFG_ANALOG, "AI10"},
         {CONTROLLINO_AI11, CFG_ANALOG, "AI11"},
 
@@ -143,7 +147,7 @@ void app_ptt_init()
   // thermo_.init(2, MAX31865_3WIRE);
 }
 
-// 100ms task (HSH -> PC)
+// 100ms task (PTT -> PC)
 void app_ptt_task100ms(JsonDocument &doc)
 {
   // to send dis2go & cpos to server
@@ -168,7 +172,7 @@ void app_ptt_task100ms(JsonDocument &doc)
     doc[name] = (CFG_ANALOG == mode) ? analogRead(portNum) : digitalRead(portNum);
   }
   // doc["AI12"] = map(doc["AI12"], 0, 1023, 0, 300);
-  doc["heartbeat"] = millis() / 1000;;
+  doc["heartbeat"] = millis() / 1000;
   doc["swver"] = SW_VERSION; // firmware version info
 }
 
@@ -181,7 +185,7 @@ void app_ptt_task1s()
   //  app_ptt_loop_tests();
 }
 
-// sets the values (PC -> HSH)
+// sets the values (PC -> PTT)
 void app_ptt_setValues(JsonDocument &doc)
 {
   // Write digital output ports
@@ -202,6 +206,8 @@ void app_ptt_enterSaveState()
   // Set digital output ports
   for (uint8_t n = 0; n < sizeof(app_ptt_DoutPortCfg) / sizeof(CFG_DoutPorts_T); n++)
   {
+    if (app_ptt_DoutPortCfg[n].noreset)
+      continue;
     uint8_t portNum = app_ptt_DoutPortCfg[n].portNum;
 
     digitalWrite(portNum, LOW);
